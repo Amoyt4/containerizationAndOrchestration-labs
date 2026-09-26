@@ -1,0 +1,35 @@
+groups:
+  - name: mydocker
+    rules:
+      - alert: HighMemoryUsage
+        expr: |
+          container_memory_usage_bytes{name="api-mon"}
+          /
+          container_spec_memory_limit_bytes{name="api-mon"} > 0.9
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Память api-mon близка к лимиту (>90%)"
+          description: "Риск OOMKilled"
+
+      - alert: CPUThrottling
+        expr: |
+          rate(container_cpu_cfs_throttled_periods_total{name="api-mon"}[1m])
+          /
+          rate(container_cpu_cfs_periods_total{name="api-mon"}[1m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU throttling api-mon >10% периодов"
+          description: "Приложение упирается в cpu.max, растёт latency"
+
+      - alert: PIDsSaturation
+        expr: container_processes{name="api-mon"} > 40
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Приближение к pids.max"
+          description: "Утечка потоков или fork-бомба"

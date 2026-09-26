@@ -1,0 +1,6 @@
+FROM golang:1.27-alpine
+WORKDIR /src
+COPY main.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /api main.go
+EXPOSE 8080
+ENTRYPOINT ["/api"]

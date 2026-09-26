@@ -1,0 +1,11 @@
+*.exe
+*.test
+*.out
+vendor/
+lab1/api
+lab1/seccomp_wrapper
+*.tar
+*.tar.gz
+.idea/
+.vscode/
+*.swp
