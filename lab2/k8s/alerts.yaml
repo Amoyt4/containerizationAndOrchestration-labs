@@ -1,0 +1,46 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: api-alerts
+  namespace: monitoring
+  labels:
+    release: kps
+spec:
+  groups:
+    - name: api.rules
+      interval: 30s
+      rules:
+        - alert: HighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{status=~"5.."}[5m]))
+              /
+              sum(rate(http_requests_total[5m]))
+            ) > 0.05
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Error rate > 5% за 1 минуты"
+            description: "АХТУНГ!!!! СЕРВЕР ПЯТИСОТИТ. Текущий error rate: {{ $value | humanizePercentage }}"
+
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+            ) > 1
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "p95 latency > 1s за 1 минуты"
+            description: "ТЕРЯЕМ ДЕНЬГИ, КЛИЕНТЫ УХОДЯТ!!!! Долго грузит p95: {{ $value }}s"
+
+        - alert: ServiceDown
+          expr: up{job="api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ВСЁ УПАЛО!!!"
+            description: "ВСЁ УПАЛО!!!"
