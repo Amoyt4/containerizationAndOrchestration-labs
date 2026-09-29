@@ -307,8 +307,8 @@ stringData:
 
 <img src="imgs/err1.png" alt="err1" width="800" height="200">
 <img src="imgs/err2.png" alt="err2" width="800" height="200">
-<img src="imgs/tg_err1_2.png" alt="tg12" width="800" height="200">
-<img src="imgs/tg_err3.png" alt="tg3" width="800" height="200">
+<img src="imgs/tg_err1_2.png" alt="tg12" width="500" height="600">
+<img src="imgs/tg_err3.png" alt="tg3" width="500" height="600">
 
 
 ## Karma
