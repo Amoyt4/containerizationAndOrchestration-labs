@@ -1,7 +1,6 @@
 # НЕТ ПОВЕСТИ ПЕЧАЛЬНЕЕ НА СВЕТЕ,
 # ЧЕМ ПОВЕСТЬ О ТЁМЕ, ОБСИРВОБЕТИ И МОНИТОРЕТЕ
 
-<img src="imgs/11.png" alt="w" width="" height="">
 
 
 <img src="imgs/image.png" alt="meme1" width="500" height="250">
