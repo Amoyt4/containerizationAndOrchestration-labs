@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "shop.fullname" . }}-api-alerts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+    release: kps
+spec:
+  groups:
+    - name: shop.api.rules
+      interval: 30s
+      rules:
+        - alert: ShopApiHighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{status=~"5..", job="shop-shop-api"}[5m]))
+              /
+              sum(rate(http_requests_total{job="shop-shop-api"}[5m]))
+            ) > 0.05
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Shop API: error rate > 5%"
+            description: 'Пользователи получают 5xx. Возможная причина: БД недоступна. Rate: {{ "{{ $value | humanizePercentage }}" }}'
+
+        - alert: ShopPostgresDown
+          expr: |
+            kube_pod_container_status_ready{
+              pod=~"shop-shop-postgres-.*",
+              namespace="shop"
+            } == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Shop PostgreSQL недоступен"
+            description: "Под postgres не Ready. Без БД api не может создавать/читать заказы."
+
+        - alert: ShopApiDown
+          expr: up{job="shop-shop-api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Shop API недоступен"
+            description: "Prometheus не может скрейпить shop-shop-api > 1 минуты."

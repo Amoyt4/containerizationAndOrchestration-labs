@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-test
+  namespace: shop
+  labels:
+    app.kubernetes.io/name: load-test
+    app.kubernetes.io/part-of: shop
+spec:
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: docker.io/curlimages/curl:latest
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          while true; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://10.96.103.182:8080/health)
+            echo "$(date +%T) → $code"
+            sleep 0.3
+          done
+      resources:
+        requests:
+          cpu: 100m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 128Mi
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        privileged: false
+        allowPrivilegeEscalation: false

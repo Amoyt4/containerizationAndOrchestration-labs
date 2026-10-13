@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-no-limits
+  namespace: shop
+  labels:
+    app.kubernetes.io/name: bad-pod
+    app.kubernetes.io/part-of: shop
+spec:
+  containers:
+    - name: app
+      image: docker.io/library/nginx:1.27
+      # НЕТ resources.requests / resources.limits
+      securityContext:
+        runAsNonRoot: true
+        privileged: false
+        allowPrivilegeEscalation: false
