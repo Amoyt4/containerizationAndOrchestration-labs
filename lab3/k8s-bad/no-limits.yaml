@@ -10,7 +10,6 @@ spec:
   containers:
     - name: app
       image: docker.io/library/nginx:1.27
-      # НЕТ resources.requests / resources.limits
       securityContext:
         runAsNonRoot: true
         privileged: false

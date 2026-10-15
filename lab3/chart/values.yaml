@@ -1,8 +1,8 @@
-# Общие настройки
 nameOverride: shop
 
-# api
 api:
+  spread:
+    mechanism: topologySpread
   replicaCount: 3
   image:
     repository: docker.io/library/shop-api
@@ -22,7 +22,6 @@ api:
     PORT: "8080"
     DATABASE_URL: "postgres://shop:shop@shop-shop-postgres-rw:5432/shop?sslmode=disable"
 
-# worker
 worker:
   replicaCount: 2
   image:

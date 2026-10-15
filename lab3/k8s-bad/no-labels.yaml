@@ -3,7 +3,6 @@ kind: Pod
 metadata:
   name: bad-no-labels
   namespace: shop
-  # НЕТ labels app.kubernetes.io/name и app.kubernetes.io/part-of
 spec:
   containers:
     - name: app

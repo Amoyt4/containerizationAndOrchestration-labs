@@ -14,5 +14,5 @@ spec:
         requests: { cpu: "100m", memory: "128Mi" }
         limits:   { cpu: "200m", memory: "256Mi" }
       securityContext:
-        privileged: true          # ← ЗАПРЕЩЕНО
+        privileged: true
         runAsNonRoot: true

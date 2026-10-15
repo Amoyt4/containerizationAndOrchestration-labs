@@ -16,4 +16,3 @@ spec:
       securityContext:
         privileged: false
         allowPrivilegeEscalation: false
-        # НЕТ runAsNonRoot: true — политика отклонит
