@@ -1,0 +1,67 @@
+nameOverride: shop
+
+api:
+  replicaCount: 3
+  priorityClassName: shop-shop-high
+  image:
+    repository: docker.io/library/shop-api
+    tag: v1
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 8081
+    nodePort: 30080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      cpu: 50m
+      memory: 100Mi
+  env:
+    HEALTH_FAIL: "false"
+    PORT: "8080"
+    DATABASE_URL: "postgres://shop:shop@shop-shop-postgres-rw:5432/shop?sslmode=disable"
+  spread:
+    maxSkew: 1
+    whenUnsatisfiable: DoNotSchedule
+
+worker:
+  replicaCount: 2
+  priorityClassName: shop-shop-high
+  image:
+    repository: docker.io/library/shop-worker
+    tag: v1
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      cpu: 50m
+      memory: 100Mi
+  env:
+    DATABASE_URL: "postgres://shop:shop@shop-shop-postgres-rw:5432/shop?sslmode=disable"
+
+priorityClasses:
+  high:
+    value: 1000
+  low:
+    value: 100
+
+podDisruptionBudgets:
+  api:
+    enabled: true
+    minAvailable: 2
+  postgres:
+    enabled: true
+    minAvailable: 1
+
+networkPolicies:
+  enabled: true
+  api:
+    port: 8080
+  postgres:
+    port: 5332
+  dns:
+    port: 53

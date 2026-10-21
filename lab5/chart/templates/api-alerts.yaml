@@ -1,0 +1,42 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "shop.fullname" . }}-network-alerts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: kps
+spec:
+  groups:
+    - name: shop.network.rules
+      interval: 30s
+      rules:
+        - alert: ShopApiHighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{status=~"5..", job="shop-shop-api"}[5m]))
+              /
+              sum(rate(http_requests_total{job="shop-shop-api"}[5m]))
+            ) > 0.05
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Shop API: error rate > 5%"
+        - alert: ShopApiDown
+          expr: up{job="shop-shop-api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Shop API недоступен"
+        - alert: ShopDNSResolutionFailing
+          expr: |
+            sum(rate(coredns_dns_responses_total{rcode=~"SERVFAIL|REFUSED"}[5m]))
+            /
+            sum(rate(coredns_dns_responses_total[5m]))
+            > 0.01
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Проблемы с DNS"
